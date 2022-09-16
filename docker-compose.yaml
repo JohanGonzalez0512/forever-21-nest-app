@@ -13,3 +13,32 @@ services:
     container_name: foreverdb
     volumes:
       - ./postgres:/var/lib/postgresql/data
+
+# version: '3.9'
+
+# services:
+#   forever-api:
+#     depends_on:
+#       - db
+#     build:
+#       context: .
+#       dockerfile: Dockerfile
+#     image: forever21-image
+#     restart: always
+#     ports:
+#       - "${PORT}:${PORT}"
+#     env_file:
+#       - .env
+#   db:
+#     image: postgres
+#     restart: always
+#     ports:
+#       - "5432:5432"
+#     environment:
+#       POSTGRES_PASSWORD: ${DB_PASSWORD}
+#       POSTGRES_DB: ${DB_NAME}
+#     volumes:
+#       - forever21db:/var/lib/postgresql/data
+
+# volumes:
+#   forever21db:

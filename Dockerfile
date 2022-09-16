@@ -25,4 +25,6 @@ RUN yarn install --prod
 
 COPY --from=builder /app/dist ./dist
 
+EXPOSE 3000
+
 CMD [ "node","dist/main" ]

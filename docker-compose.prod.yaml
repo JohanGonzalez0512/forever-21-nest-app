@@ -1,0 +1,30 @@
+version: '3'
+
+volumes:
+  forever21db:
+
+services:
+  forever21app:
+    depends_on:
+      - db
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    image: forever21-image
+    container_name: forever21app
+    restart: always 
+    ports:
+      - "${PORT}:${PORT}"
+    env_file:
+      - .env
+  db:
+    image: postgres:14.3
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    container_name: foreverdb
+    volumes:
+      - forever21db:/var/lib/postgresql/data

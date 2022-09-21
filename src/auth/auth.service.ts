@@ -2,6 +2,7 @@ import { BadRequestException, Injectable, InternalServerErrorException, Unauthor
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
+import { Office } from '../offices/entities/office.entity';
 import * as bcrypt from "bcrypt";
 import { LoginUserDto, CreateUserDto } from './dto';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
@@ -13,15 +14,21 @@ export class AuthService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+
+    @InjectRepository(Office)
+    private readonly officeRepository: Repository<Office>,
+
     private readonly jwtService: JwtService
   ) { }
 
 
   async create(createUserDto: CreateUserDto) {
     try {
-      const { password, ...userData } = createUserDto;
+      const { password, office: officeId, ...userData } = createUserDto;
+
       const user = this.userRepository.create({
         ...userData,
+        office: { id: officeId },
         password: bcrypt.hashSync(password, 10),
       });
 
@@ -30,13 +37,15 @@ export class AuthService {
 
       return {
         ...user,
-        token: this.getJwtToken({ id: user.id})
+        token: this.getJwtToken({ id: user.id })
       }
 
     } catch (error) {
-      this.handleDBExceptions(error)
+      this.handleDBExceptions(error);
     }
   }
+
+
 
   async login(loginUserDto: LoginUserDto) {
 
@@ -78,8 +87,11 @@ export class AuthService {
     return token;
   }
 
-  private handleDBExceptions(error: any): never {
+  private handleDBExceptions(error: any) {
     if (error.code === '23505')
+      throw new BadRequestException(error.detail);
+
+    if (error.code === '23503')
       throw new BadRequestException(error.detail);
     console.log(error)
 

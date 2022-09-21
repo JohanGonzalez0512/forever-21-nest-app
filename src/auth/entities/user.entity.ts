@@ -1,8 +1,10 @@
+import { Office } from '../../offices/entities/office.entity';
 import { Column, 
         Entity, 
         PrimaryGeneratedColumn, 
         BeforeInsert, 
-        BeforeUpdate,} 
+        BeforeUpdate,
+        ManyToOne,} 
         from 'typeorm';
 
 
@@ -30,6 +32,13 @@ export class User {
         default: ['user']
     })
     roles: string[];
+
+
+    @ManyToOne(
+        () => Office,
+        (office) => office.user,
+    )
+    office: Office;
 
 
 

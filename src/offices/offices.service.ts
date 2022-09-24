@@ -2,7 +2,6 @@ import { BadRequestException, Injectable, InternalServerErrorException } from '@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateOfficeDto } from './dto/create-office.dto';
-import { UpdateOfficeDto } from './dto/update-office.dto';
 import { Office } from './entities/office.entity';
 
 @Injectable()
@@ -28,20 +27,15 @@ export class OfficesService {
     }
   }
 
-  findAll() {
-    return `This action returns all offices`;
+  findAll() {   
+      const offices = this.officeRepository.find();
+      return offices;
+
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} office`;
-  }
-
-  update(id: number, updateOfficeDto: UpdateOfficeDto) {
-    return `This action updates a #${id} office`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} office`;
+  async findOne(id: string) {
+    const office = await this.officeRepository.findOneBy({ id });
+    return office;
   }
 
 

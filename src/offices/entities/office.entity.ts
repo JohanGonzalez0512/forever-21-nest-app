@@ -1,6 +1,7 @@
 import { User } from "../../auth/entities/user.entity";
 
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Product } from "../..//products/entities";
 
 
 @Entity({
@@ -20,6 +21,12 @@ export class Office {
         { onDelete: 'CASCADE' }
     )
     user: User;
+
+    @OneToMany(
+        () => Product,
+        (product) => product.office,
+    )
+    product: Product;
 
 
 

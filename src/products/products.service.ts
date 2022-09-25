@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -22,10 +22,31 @@ export class ProductsService {
   async create(createProductDto: CreateProductDto, user: User) {
     try {
 
-      
+      let productExistance = await this.productRepository.findOneBy({ name: createProductDto.name });
+
+      if (productExistance)
+        throw new BadRequestException('Product already exists');
+
+
+      const product = this.productRepository.create({
+        ...createProductDto,
+        office: user.office,
+      });
+      await this.productRepository.save(product);
+
+      const movement = this.movementRepository.create({
+        description: 'Product created',
+        lastUpdated: new Date(),
+        product,
+        user,
+      });
+
+      await this.movementRepository.save(movement);
+
+      return movement
 
     } catch (error) {
-
+      this.handleDBExceptions(error)
     }
   }
 
@@ -33,9 +54,22 @@ export class ProductsService {
     return `This action returns all products`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  async checkExistance(id: number) {
+    try {
+      const product = await this.productRepository.findOneBy({ id });
+      return {
+        existance: product ? true : false,
+      }
+
+    } catch (error) {
+      this.handleDBExceptions(error)
+    }
   }
+
+
+  // TODO: Actualizar existencias productos: CHECAR BIEN 
+  //puede variar dependiendo como lo vayas a pinches hacer en el frontend
+
 
   update(id: number, updateProductDto: UpdateProductDto) {
     return `This action updates a #${id} product`;
@@ -43,5 +77,23 @@ export class ProductsService {
 
   remove(id: number) {
     return `This action removes a #${id} product`;
+  }
+
+
+  private handleDBExceptions(error: any): never {
+    if (error.code === '23505')
+      throw new BadRequestException(error.detail);
+
+    if (error.response) {
+      if (error.response.statusCode === 400) {
+        throw new BadRequestException(error.response.message);
+      }
+    }
+
+    console.log(error)
+
+
+    throw new InternalServerErrorException('Unexpected error, check server logs');
+
   }
 }

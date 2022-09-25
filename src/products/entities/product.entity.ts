@@ -7,13 +7,19 @@ import { Office } from "../../offices/entities/office.entity";
 })
 export class Product {
 
-    @PrimaryColumn()
+    @PrimaryColumn({
+        unique: true,
+    })
     id: number;
     @Column('text', { unique: true })
     name: string;
-    @Column()
+    @Column('text',{
+        default: 'No Image',
+    })
     image: string;
-    @Column()
+    @Column('int',{
+        default: 0,
+    })
     quantity: number;
     
 

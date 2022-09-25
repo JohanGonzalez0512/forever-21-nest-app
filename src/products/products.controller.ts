@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -8,24 +8,26 @@ import { User } from '..//auth/entities/user.entity';
 @Controller('products')
 @Auth()
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) {}
+  constructor(private readonly productsService: ProductsService) { }
 
   @Post()
-  
+
   create(
-    @Body() createProductDto: CreateProductDto, 
+    @Body() createProductDto: CreateProductDto,
     @GetUser() user: User,) {
     return this.productsService.create(createProductDto, user);
   }
+
+
 
   @Get()
   findAll() {
     return this.productsService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.productsService.findOne(+id);
+  @Get('existance/:id')
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.productsService.checkExistance(id);
   }
 
   @Patch(':id')

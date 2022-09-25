@@ -6,10 +6,13 @@ import { Product } from "./product.entity";
     name: 'movements',
 })
 export class Movement {
+
     @PrimaryGeneratedColumn()
     id: string;
+
     @Column()
     description: string;
+    
     @Column()
     lastUpdated: Date;
 

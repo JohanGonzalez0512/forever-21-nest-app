@@ -37,23 +37,32 @@ export class FilesService {
     }
 
     async uploadProductImage(id: string, file: Express.Multer.File) {
-
-        // TODO: Save file path to database
-        // TODO: Check if the id exists in the database
-        const options = {
-            use_filename: true,
-            unique_filename: false,
-            overwrite: true,
-        };
-
-        const result = await cloudinary.uploader.upload(file.path, options);
-
-
-
-        return {
-            result: result.url
+        try {
+            const product = await this.productRepository.findOneBy({ id });
+            if (!product)
+                throw new BadRequestException('Product not found');
+    
+           const options = {
+                use_filename: true,
+                unique_filename: false,
+                overwrite: true,
+            };
+    
+            const result = await cloudinary.uploader.upload(file.path, options);
+    
+            this.productRepository.update(id, { imageURL: result.url });
+    
+    
+    
+            return {
+                imageUrl: result.url
+            }
+            
+        } catch (error: any) {
+        
+            throw new BadRequestException(error.message);
         }
-        this.productRepository.update(id, { imageURL: file.filename });
+       
     }
 
 }

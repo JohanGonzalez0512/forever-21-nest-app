@@ -16,7 +16,7 @@ export class Product {
     @Column('text',{
         default: 'No Image',
     })
-    image: string;
+    imageURL: string;
     @Column('int',{
         default: 0,
     })

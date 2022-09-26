@@ -22,7 +22,15 @@ export class ProductsService {
   async create(createProductDto: CreateProductDto, user: User) {
     try {
 
-      let productExistance = await this.productRepository.findOneBy({ name: createProductDto.name });
+      let productExistance = await this.productRepository.findOne(
+        {
+          where: {
+            name: createProductDto.name,
+            office: { id: user.office.id },
+          },
+          relations: ['office'],
+          
+        });
 
       if (productExistance)
         throw new BadRequestException('Product already exists');
@@ -54,7 +62,7 @@ export class ProductsService {
     return `This action returns all products`;
   }
 
-  async checkExistance(id: number) {
+  async checkExistance(id: string) {
     try {
       const product = await this.productRepository.findOneBy({ id });
       return {

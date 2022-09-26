@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, OneToMany, OneToOne, PrimaryColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, OneToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 import { Movement } from "./movement.entity";
 import { Office } from "../../offices/entities/office.entity";
 
@@ -7,10 +7,8 @@ import { Office } from "../../offices/entities/office.entity";
 })
 export class Product {
 
-    @PrimaryColumn({
-        unique: true,
-    })
-    id: number;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
     @Column('text', { unique: true })
     name: string;
     @Column('text',{

@@ -36,6 +36,8 @@ export class FilesService {
         return path;
     }
 
+
+
     async uploadProductImage(id: string, file: Express.Multer.File) {
         try {
             const product = await this.productRepository.findOneBy({ id });
@@ -51,8 +53,6 @@ export class FilesService {
             const result = await cloudinary.uploader.upload(file.path, options);
     
             this.productRepository.update(id, { imageURL: result.url });
-    
-    
     
             return {
                 imageUrl: result.url

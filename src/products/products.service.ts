@@ -1,8 +1,7 @@
 import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { CreateProductDto } from './dto/create-product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
+import { In, Repository } from 'typeorm';
+import { CreateProductDto, UpdateProductQuantityDto } from './dto';
 import { User } from '../auth/entities/user.entity';
 import { Movement, Product } from './entities';
 
@@ -29,7 +28,7 @@ export class ProductsService {
             office: { id: user.office.id },
           },
           relations: ['office'],
-          
+
         });
 
       if (productExistance)
@@ -59,7 +58,14 @@ export class ProductsService {
   }
 
   findAll() {
-    return `This action returns all products`;
+    try {
+      return this.productRepository.find(
+        {
+          relations: ['office'],
+        });
+    } catch (error) {
+      this.handleDBExceptions(error)
+    }
   }
 
   async checkExistance(id: string) {
@@ -75,17 +81,56 @@ export class ProductsService {
   }
 
 
-  // TODO: Actualizar existencias productos: CHECAR BIEN 
-  //puede variar dependiendo como lo vayas a pinches hacer en el frontend
+  async update(updateProductQuantityDto: UpdateProductQuantityDto, user: User) {
+    try {
 
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+      const { products: productsToUpdate } = updateProductQuantityDto;
+
+      let products = await this.productRepository.find({
+        where: {
+          id: In(productsToUpdate.map(product => product.id)),
+        }
+      })
+
+      if (products.length !== productsToUpdate.length)
+        throw new BadRequestException('Some products dont exist');
+
+
+
+      const insertPromises = [];
+
+      products.forEach(product => {
+        const productToUpdate = productsToUpdate.find(productToUpdate => productToUpdate.id === product.id);
+        productToUpdate.quantity = product.quantity + productToUpdate.quantity;
+        insertPromises.push(this.productRepository.update(productToUpdate.id, productToUpdate));
+      })
+
+      await this.productRepository.save(products);
+
+      const movements = products.map(product => {
+        return this.movementRepository.create({
+          description: 'Product updated',
+          lastUpdated: new Date(),
+          product,
+          user,
+        });
+      });
+
+      await this.movementRepository.save(movements);
+
+      return movements;
+
+    } catch (error) {
+      this.handleDBExceptions(error)
+    }
+
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} product`;
-  }
+
+
+
+
 
 
   private handleDBExceptions(error: any): never {

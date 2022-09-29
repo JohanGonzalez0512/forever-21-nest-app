@@ -25,6 +25,7 @@ export class ProductsService {
         {
           where: {
             name: createProductDto.name,
+            SKU: createProductDto.SKU,
             office: { id: user.office.id },
           },
           relations: ['office'],
@@ -68,9 +69,9 @@ export class ProductsService {
     }
   }
 
-  async checkExistance(id: string) {
+  async checkExistance(SKU: string) {
     try {
-      const product = await this.productRepository.findOneBy({ id });
+      const product = await this.productRepository.findOneBy({ SKU });
       return {
         existance: product ? true : false,
       }
@@ -89,7 +90,7 @@ export class ProductsService {
 
       let products = await this.productRepository.find({
         where: {
-          id: In(productsToUpdate.map(product => product.id)),
+          SKU: In(productsToUpdate.map(product => product.SKU)),
         }
       })
 
@@ -101,9 +102,9 @@ export class ProductsService {
       const insertPromises = [];
 
       products.forEach(product => {
-        const productToUpdate = productsToUpdate.find(productToUpdate => productToUpdate.id === product.id);
+        const productToUpdate = productsToUpdate.find(productToUpdate => productToUpdate.SKU === product.SKU);
         productToUpdate.quantity = product.quantity + productToUpdate.quantity;
-        insertPromises.push(this.productRepository.update(productToUpdate.id, productToUpdate));
+        insertPromises.push(this.productRepository.update(productToUpdate.SKU, productToUpdate));
       })
 
       await this.productRepository.save(products);

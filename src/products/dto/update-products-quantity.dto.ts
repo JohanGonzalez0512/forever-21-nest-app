@@ -2,7 +2,7 @@ import {  IsArray, IsString } from "class-validator";
 
 
 interface Product {
-    id: string;
+    SKU: string;
     quantity: number;
 }
 

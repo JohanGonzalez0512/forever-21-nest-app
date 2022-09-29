@@ -9,19 +9,23 @@ export class Product {
 
     @PrimaryGeneratedColumn('uuid')
     id: string;
+
     @Column('text', { unique: true })
     name: string;
+
     @Column('text',{
         default: 'No Image',
     })
     imageURL: string;
+
     @Column('int',{
         default: 0,
     })
     quantity: number;
     
-
-
+    @Column('text')
+    SKU: string;
+    
     @ManyToOne(
         () => Office,
         (office) => office.product,

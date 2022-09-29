@@ -30,8 +30,8 @@ export class ProductsController {
   }
 
   @Get('existence/:id')
-  findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return this.productsService.checkExistance(id);
+  findOne(@Param('id') SKU: string) {
+    return this.productsService.checkExistance(SKU);
   }
 
 

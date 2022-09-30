@@ -1,4 +1,4 @@
-import { IsArray, IsNotEmpty, IsUUID } from "class-validator";
+import { IsArray, IsBoolean, IsNotEmpty, IsOptional, IsUUID } from "class-validator";
 
 interface OrderItem {
     SKU: string;
@@ -13,6 +13,10 @@ export class CreateOrderDto {
 
     @IsUUID()
     user: string;
+
+    @IsBoolean()
+    @IsOptional()
+    status?: boolean;
 
 
 

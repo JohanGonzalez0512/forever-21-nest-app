@@ -31,7 +31,7 @@ export class OrdersService {
   async create(createOrderDto: CreateOrderDto, user: User) {
     try {
 
-      const { user: userId, products} = createOrderDto;
+      const { user: userId, products } = createOrderDto;
 
       const userExists = await this.userRepository.findOneBy({ id: userId });
       if (!userExists)
@@ -95,8 +95,30 @@ export class OrdersService {
     return `This action returns a #${id} order`;
   }
 
-  update(id: number, updateOrderDto: UpdateOrderDto) {
-    return `This action updates a #${id} order`;
+  async completeOrder(id: string, updateOrderDto: UpdateOrderDto) {
+    try {
+
+      const order = await this.orderRepository.findOneBy({ id });
+      if (!order)
+        throw new BadRequestException('Order does not exist');
+      
+      const orderToUpdate = await this.orderRepository.update(id , {
+        status: updateOrderDto.status
+      });
+
+      return {
+        order: {
+          ...order,
+          status: updateOrderDto.status
+        }
+
+      };
+
+      
+
+    } catch (error) {
+      this.handleDBExceptions(error)
+    }
   }
 
 

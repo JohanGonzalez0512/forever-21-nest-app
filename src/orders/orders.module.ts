@@ -6,10 +6,17 @@ import { User } from '../auth/entities/user.entity';
 import { Product } from '../products/entities/product.entity';
 import { Office } from 'src/offices/entities/office.entity';
 import { Orders_products, Order } from './entities';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Order, User, Product, Office, Orders_products]),
+    TypeOrmModule.forFeature([
+      Order,
+      User,
+      Product,
+      Office,
+      Orders_products]),
+    AuthModule
   ],
   controllers: [OrdersController],
   providers: [OrdersService],

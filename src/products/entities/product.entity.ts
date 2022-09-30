@@ -1,6 +1,7 @@
 import { Column, Entity, ManyToOne, OneToMany, OneToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 import { Movement } from "./movement.entity";
 import { Office } from "../../offices/entities/office.entity";
+import { Orders_products } from '../../orders/entities/orders-products.entity';
 
 @Entity({
     name: 'products',
@@ -38,5 +39,11 @@ export class Product {
         (movement) => movement.product,
     )
     movement: Movement;
+
+    @OneToMany(
+        () => Orders_products,
+        (orders_products) => orders_products.product,
+    )
+    orders_products: Orders_products;
 
 }

@@ -6,11 +6,11 @@ import {
     BeforeUpdate,
     ManyToOne,
     OneToMany,
-    OneToOne,
 }
     from 'typeorm';
 import { Office } from '../../offices/entities/office.entity';
 import { Movement } from '../../products/entities';
+import { Order } from '../../orders/entities/order.entity';
 
 
 @Entity('users')
@@ -45,6 +45,12 @@ export class User {
         {eager: true}
     )
     office: Office;
+
+    @OneToMany(
+        () => Order,
+        (order) => order.user,
+    )
+    order: Order;
 
 
     @OneToMany(

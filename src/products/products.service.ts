@@ -104,7 +104,7 @@ export class ProductsService {
       products.forEach(product => {
         const productToUpdate = productsToUpdate.find(productToUpdate => productToUpdate.SKU === product.SKU);
         productToUpdate.quantity = product.quantity + productToUpdate.quantity;
-        insertPromises.push(this.productRepository.update(productToUpdate.SKU, productToUpdate));
+        insertPromises.push(this.productRepository.update(product.id, productToUpdate));
       })
 
       await this.productRepository.save(products);

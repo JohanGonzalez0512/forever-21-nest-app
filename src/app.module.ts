@@ -6,6 +6,7 @@ import { OfficesModule } from './offices/offices.module';
 import { ProductsModule } from './products/products.module';
 import { FilesModule } from './files/files.module';
 import { OrdersModule } from './orders/orders.module';
+import { StatisticsModule } from './statistics/statistics.module';
 
 
 @Module({
@@ -26,6 +27,7 @@ import { OrdersModule } from './orders/orders.module';
     ProductsModule,
     FilesModule,
     OrdersModule,
+    StatisticsModule,
   ],
   providers: [],
 })

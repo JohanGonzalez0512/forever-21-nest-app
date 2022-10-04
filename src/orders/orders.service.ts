@@ -87,8 +87,62 @@ export class OrdersService {
     }
   }
 
-  findAll() {
-    return `This action returns all orders`;
+  async findAll(user: User) {
+    try {
+      const orders = await this.orderRepository.find({
+        where: {
+          user: { id: user.id }
+        },
+        relations: ['user', 'orders_products']
+      });
+
+      let products = await this.orders_productsRepository.find({
+        where: {
+          order: In(orders.map(order => order.id))
+        },
+        relations: ['product', 'order']
+      });
+
+      const results = orders.map(order => {
+        const { id, status, orders_products } = order;
+
+        const newProducts = products.filter(product => product.order.id === id);
+        console.log(products, 'products', 'id', id);
+
+
+        return {
+          id,
+          status,
+          
+          products: newProducts.map(product => {
+            const { SKU, name, imageURL, id } = product.product;
+            return {
+              id,
+              SKU,
+              name,
+              imageURL,
+            }
+          }),
+          length: newProducts.length
+
+        }
+
+      });
+
+      return {
+        results
+      }
+
+    }
+
+
+
+
+    catch (error) {
+
+    }
+
+
   }
 
   findOne(id: number) {
@@ -101,8 +155,8 @@ export class OrdersService {
       const order = await this.orderRepository.findOneBy({ id });
       if (!order)
         throw new BadRequestException('Order does not exist');
-      
-      const orderToUpdate = await this.orderRepository.update(id , {
+
+      await this.orderRepository.update(id, {
         status: updateOrderDto.status
       });
 
@@ -114,7 +168,7 @@ export class OrdersService {
 
       };
 
-      
+
 
     } catch (error) {
       this.handleDBExceptions(error)

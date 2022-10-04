@@ -38,6 +38,7 @@ export class ProductsService {
 
       const product = this.productRepository.create({
         ...createProductDto,
+        creationDate: new Date(),
         office: user.office,
       });
       await this.productRepository.save(product);

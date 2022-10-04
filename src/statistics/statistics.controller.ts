@@ -6,14 +6,15 @@ export class StatisticsController {
   constructor(private readonly statisticsService: StatisticsService) {}
 
 
-  @Get()
-  findAll() {
-    return this.statisticsService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.statisticsService.findOne(+id);
+  @Get(':startDate/:endDate',)
+  findAll(
+    @Param('startDate') startDate: string,
+    @Param('endDate') endDate: string,
+  ) {
+    return this.statisticsService.findAll(
+      startDate,
+      endDate,
+    );
   }
 
   

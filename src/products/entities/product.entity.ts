@@ -26,6 +26,10 @@ export class Product {
     
     @Column('text')
     SKU: string;
+
+
+    @Column()
+    creationDate: Date;
     
     @ManyToOne(
         () => Office,

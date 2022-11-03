@@ -75,11 +75,11 @@ export class ProductsService {
       const product = await this.productRepository.findOneBy({ SKU });
       return {
         existance: product ? true : false,
-	(product) && product : {
-		name:product.name,
-		SKU:product.SKU,
-		quantity:product.quantity
-	} 
+        product: {
+          name: product ? product.name : null,
+          SKU: product ? product.SKU : null,
+          quantity: product ? product.quantity : null
+        }
       }
 
     } catch (error) {

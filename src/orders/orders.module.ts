@@ -4,7 +4,7 @@ import { OrdersController } from './orders.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../auth/entities/user.entity';
 import { Product } from '../products/entities/product.entity';
-import { Office } from 'src/offices/entities/office.entity';
+import { Office } from '../offices/entities/office.entity';
 import { Orders_products, Order } from './entities';
 import { AuthModule } from '../auth/auth.module';
 

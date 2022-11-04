@@ -87,7 +87,6 @@ export class ProductsService {
     }
   }
 
-
   async update(updateProductQuantityDto: UpdateProductQuantityDto, user: User) {
     try {
 
@@ -130,6 +129,8 @@ export class ProductsService {
 
     } catch (error) {
       this.handleDBExceptions(error)
+
+      
     }
 
   }

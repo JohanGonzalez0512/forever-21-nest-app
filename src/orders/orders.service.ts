@@ -107,20 +107,20 @@ export class OrdersService {
         const { id, status, orders_products } = order;
 
         const newProducts = products.filter(product => product.order.id === id);
-        console.log(products, 'products', 'id', id);
 
 
         return {
           id,
           status,
-          
           products: newProducts.map(product => {
-            const { SKU, name, imageURL, id } = product.product;
+            const { SKU, name, imageURL, id, quantity } = product.product;
             return {
               id,
               SKU,
               name,
               imageURL,
+              quantity
+
             }
           }),
           length: newProducts.length

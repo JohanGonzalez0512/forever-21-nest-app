@@ -40,7 +40,8 @@ export class OrdersService {
       let productsToOrder = await this.productRepository.find({
         where: {
           SKU: In(products.map(product => product.SKU)),
-        }
+        },
+        select: ['id', 'SKU', 'name', 'imageURL']
       })
 
       if (productsToOrder.length !== products.length)
@@ -52,6 +53,8 @@ export class OrdersService {
       });
 
       await this.orderRepository.save(order);
+
+      
 
       const orders_products = productsToOrder.map(product => {
         return this.orders_productsRepository.create({
@@ -104,8 +107,8 @@ export class OrdersService {
       });
 
       const results = orders.map(order => {
-        const { id, status, orders_products } = order;
-
+        const { id, status } = order;
+        
         const newProducts = products.filter(product => product.order.id === id);
 
 
@@ -113,13 +116,13 @@ export class OrdersService {
           id,
           status,
           products: newProducts.map(product => {
-            const { SKU, name, imageURL, id, quantity } = product.product;
+            const { SKU, name, imageURL, id } = product.product;
             return {
               id,
               SKU,
               name,
               imageURL,
-              quantity
+              quantity: product.quantity
 
             }
           }),
@@ -139,7 +142,7 @@ export class OrdersService {
 
 
     catch (error) {
-
+      this.handleDBExceptions(error)
     }
 
 

@@ -4,6 +4,7 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { Auth, GetUser } from '../auth/decorators';
 import { User } from '../auth/entities/user.entity';
+import { CheckExistenceDto } from './dto/check-existence.dto';
 
 @Controller('orders')
 @Auth()
@@ -16,6 +17,12 @@ export class OrdersController {
     @Body() createOrderDto: CreateOrderDto
   ) {
     return this.ordersService.create(createOrderDto, user);
+  }
+  @Post('existence')
+  checkExistence(
+    @Body() checkExistenceDto: CheckExistenceDto
+  ) {
+    return this.ordersService.checkExistence(checkExistenceDto);
   }
 
   @Get()

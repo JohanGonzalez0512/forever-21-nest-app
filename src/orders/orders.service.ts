@@ -6,6 +6,7 @@ import { UpdateOrderDto } from './dto/update-order.dto';
 import { Order, Orders_products } from './entities';
 import { User } from '../auth/entities/user.entity';
 import { Product } from '../products/entities/product.entity';
+import { CheckExistenceDto } from './dto/check-existence.dto';
 
 @Injectable()
 export class OrdersService {
@@ -54,7 +55,7 @@ export class OrdersService {
 
       await this.orderRepository.save(order);
 
-      
+
 
       const orders_products = productsToOrder.map(product => {
         return this.orders_productsRepository.create({
@@ -108,7 +109,7 @@ export class OrdersService {
 
       const results = orders.map(order => {
         const { id, status } = order;
-        
+
         const newProducts = products.filter(product => product.order.id === id);
 
 
@@ -176,6 +177,43 @@ export class OrdersService {
     } catch (error) {
       this.handleDBExceptions(error)
     }
+  }
+
+
+  async checkExistence(checkExistenceDto: CheckExistenceDto) {
+    try {
+      const { SKU, id } = checkExistenceDto;
+
+      const product = await this.productRepository.findOneBy({ SKU });
+      if (!product)
+        return {
+          existence: false,
+          productId: null
+        }
+      const order = await this.orderRepository.findOneBy({ id });
+      if (!order)
+        throw new BadRequestException('Order does not exist');
+
+      const order_product = await this.orders_productsRepository.findOne({
+        where: {
+          order: { id },
+          product: { id: product.id }
+        }
+      }
+      )
+
+
+      return {
+        existence: (product && order_product) ? true : false,
+        productId: (product && order_product) ? product.id : null
+      }
+
+
+    }
+    catch (error) {
+      this.handleDBExceptions(error)
+    }
+
   }
 
 
